@@ -3,10 +3,10 @@ services:
   app:
     build: .
     container_name: node_app
-    ports:
-      - "3000:3000"
     environment:
       - NODE_ENV=production
+    expose:
+      - 3000
     restart: unless-stopped
 
   nginx:
