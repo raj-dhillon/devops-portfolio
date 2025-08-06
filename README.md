@@ -12,3 +12,4 @@
 8. Created specific nginx server block, including server name to allow multiple servers in future, and not redirect everything to the app
 9. Removed VPS wide nginx, opting to instead serve https certificate at the container level
 10. Mounted certs from host machine to container, redirecting non-secure traffic to https
+11. Removed exposed app port, only allowing nginx to allow traffic
