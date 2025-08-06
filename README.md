@@ -9,3 +9,4 @@
 5. Installing Docker and docker compose on VPS
 6. Cloning git repository and running using docker compose
 7. Creating an A Record to point vps.rajsdhillon.com to my VPS hosted on Hetzner
+8. Created specific nginx server block, including server name to allow multiple servers in future, and not redirect everything to the app
