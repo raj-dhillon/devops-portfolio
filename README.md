@@ -10,4 +10,4 @@
 6. Cloning git repository and running using docker compose
 7. Creating an A Record to point vps.rajsdhillon.com to my VPS hosted on Hetzner
 8. Created specific nginx server block, including server name to allow multiple servers in future, and not redirect everything to the app
-9. Installed certbot, python3-certbot-nginx
+9. Removed VPS wide nginx, opting to instead serve https certificate at the container level
