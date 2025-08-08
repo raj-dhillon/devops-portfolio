@@ -15,3 +15,4 @@
 11. Removed exposed app port, only allowing nginx to allow traffic
 12. Potential improvement: Need to add post renewal hook script to reload nginx container
 13. Created SSH key pair for repo github actions
+14. Created github actions workflow to checkout repo, ssh into vps, pull repo, and replace running container with changes
