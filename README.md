@@ -13,3 +13,5 @@
 9. Removed VPS wide nginx, opting to instead serve https certificate at the container level
 10. Mounted certs from host machine to container, redirecting non-secure traffic to https
 11. Removed exposed app port, only allowing nginx to allow traffic
+12. Potential improvement: Need to add post renewal hook script to reload nginx container
+13. Created SSH key pair for repo github actions
