@@ -4,15 +4,17 @@
     const port = process.env.PORT || 3000;
 
     app.get('/', (req, res) => {
-        res.send(`<h>Hello World!</h>\n<p>Guess what day <b>${genRandomDate()}</b> is!</p>`);
+        res.send(`<h>Hello World!</h><p>Guess what day <b>${genRandomDate()}</b> is!</p>`);
     });
 
     app.get('/random-date', (req, res) => {
         const randomDate = genRandomDate();
+        const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         try {
+
             const randomDay = new Date(randomDate).getDay();
             if (req.query.ans) {
-                res.send(`<p>Date: <b>${randomDate}</b>\nDay: <b>${randomDay}</b></p>`)
+                res.send(`<p>Date: <b>${randomDate}</b><br>Day: <b>${weekDays[randomDay]}</b></p>`)
             }
             else {
                 res.send(`<b>${randomDate}</b>`);
