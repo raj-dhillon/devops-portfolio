@@ -4,7 +4,7 @@
     const port = process.env.PORT || 3000;
 
     app.get('/', (req, res) => {
-        res.send(`Hello World!\nGuess what day ${genRandomDate()} is!`);
+        res.send(`<h>Hello World!</h>\n<p>Guess what day <b>${genRandomDate()}</b> is!</p>`);
     });
 
     function genRandomDate() {
