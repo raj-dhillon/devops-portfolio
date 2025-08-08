@@ -16,3 +16,7 @@
 12. Potential improvement: Need to add post renewal hook script to reload nginx container
 13. Created SSH key pair for repo github actions
 14. Created github actions workflow to checkout repo, ssh into vps, pull repo, and replace running container with changes
+15. Added grafana, prometheus, and node exporter to docker-compose file
+16. Set up prometheus config for node exporter ingestion
+17. Expanded certs to include new grafana subdomain along with vps subdomain
+18. Created new grafana dashboard using community templates
