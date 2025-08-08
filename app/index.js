@@ -7,13 +7,13 @@
         res.send(`<h>Hello World!</h>\n<p>Guess what day <b>${genRandomDate()}</b> is!</p>`);
     });
 
-    app.get('/random-date', (req, res) => {
+    app.get('/random-date/:full', (req, res) => {
         const randomDate = genRandomDate();
-        if (req.params.ans) {
+        if (req.params.full || req.query.ans) {
             res.send(`<p>Date: <b>${randomDate}</b>\nDay: <b>${randomDate.getDay()}</b></p>`)
         }
         else {
-            res.send(randomDate);
+            res.send(`<b>${randomDate}</b>`);
         }
     });
 
