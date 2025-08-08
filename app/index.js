@@ -7,13 +7,19 @@
         res.send(`<h>Hello World!</h>\n<p>Guess what day <b>${genRandomDate()}</b> is!</p>`);
     });
 
-    app.get('/random-date/:full', (req, res) => {
+    app.get('/random-date', (req, res) => {
         const randomDate = genRandomDate();
-        if (req.params.full || req.query.ans) {
-            res.send(`<p>Date: <b>${randomDate}</b>\nDay: <b>${randomDate.getDay()}</b></p>`)
-        }
-        else {
-            res.send(`<b>${randomDate}</b>`);
+        try {
+            const randomDay = new Date(randomDate).getDay();
+            if (req.query.ans) {
+                res.send(`<p>Date: <b>${randomDate}</b>\nDay: <b>${randomDay}</b></p>`)
+            }
+            else {
+                res.send(`<b>${randomDate}</b>`);
+            }
+        } catch (error) {
+            console.error("Error parsing random date:", error);
+            return res.status(500).send("Error generating random date.");
         }
     });
 
