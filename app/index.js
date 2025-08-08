@@ -7,6 +7,16 @@
         res.send(`<h>Hello World!</h>\n<p>Guess what day <b>${genRandomDate()}</b> is!</p>`);
     });
 
+    app.get('/random-date', (req, res) => {
+        const randomDate = genRandomDate();
+        if (req.params.ans) {
+            res.send(`<p>Date: <b>${randomDate}</b>\nDay: <b>${randomDate.getDay()}</b></p>`)
+        }
+        else {
+            res.send(randomDate);
+        }
+    });
+
     function genRandomDate() {
         const start = new Date(1582, 10, 15); // Start date: October 15, 1582, when the Gregorian calendar was adopted
         const temp_now = new Date();
@@ -18,6 +28,7 @@
 
         return randomDate.toLocaleDateString('en-US');
     }
+
 
     app.listen(port, () => {
         console.log(`Server running on port ${port}`);
