@@ -13,7 +13,7 @@
         try {
 
             const randomDay = new Date(randomDate).getDay();
-            if (req.query.ans) {
+            if (req.query.ans === 'true') {
                 res.send(`<p>Date: <b>${randomDate}</b><br>Day: <b>${weekDays[randomDay]}</b></p>`)
             }
             else {
