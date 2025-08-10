@@ -80,7 +80,7 @@
         this.physics.add.collider(player, platforms);
 
         // Player gravity
-        player.setGravityY(500);
+        player.setGravityY(800);
 
         // Use provided cursor keys for input
         cursors = this.input.keyboard.createCursorKeys();
@@ -131,12 +131,13 @@
 
         // Stop jump early if not held
         if (cursors.up.isUp && player.body.velocity.y < 0) {
-          player.setVelocityY(player.body.velocity.y * 0.5);
+          // player.setVelocityY(player.body.velocity.y * 0.5);
+          player.setVelocityY(player.body.velocity.y * 0.2);
         }
 
         // Handle player jumping
         if (cursors.up.isDown && player.body.touching.down) {
-          player.setVelocityY(-550);
+          player.setVelocityY(-700);
         }
       }
     </script>
