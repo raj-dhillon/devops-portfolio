@@ -1,4 +1,5 @@
 import Player from './player.js';
+import ATS from './ats.js';
 export default class Level extends Phaser.Scene {
   constructor() {
     super({ key: 'Level' });
@@ -10,6 +11,7 @@ export default class Level extends Phaser.Scene {
     this.load.image('player', 'https://placehold.co/16x16/f0f2f4/909ead?text=P');
     this.load.image('platform', 'https://placehold.co/200x20/f85a06/ffffff?text=Platform');
     this.load.image('ground', 'https://placehold.co/800x20/f85a06/ffffff?text=Ground');
+    this.load.image('ats_enemy', 'https://placehold.co/32x32/B22222/000100?text=ATS');
     
   }
 
@@ -23,6 +25,21 @@ export default class Level extends Phaser.Scene {
     this.player = new Player(this, 200, 300);
     this.player.setGravityY(800);
 
+    // Enemy setup
+    this.ats = this.physics.add.group({
+      classType: ATS,
+      key: 'ats_enemy',
+      repeat: 5,
+      setXY: { x: 100, y: 0, stepX: 150 }
+    });
+    // Need to re-set collision bounds for each ATS enemy
+    this.ats.children.iterate(ats => {
+      ats.setCollideWorldBounds(true);
+      ats.speed = Phaser.Math.Between(80, 120);
+      ats.speed = Math.random() < 0.5 ? -1 * ats.speed : ats.speed; // Random initial direction
+    });
+
+
     // Collision setup
     this._setupCollisions();
 
@@ -32,6 +49,11 @@ export default class Level extends Phaser.Scene {
 
   update() {
     this.player.update(this.inputManager);
+
+    // Update all ATS enemies
+    this.ats.children.iterate(ats => {
+      ats.update();
+    });
   }
 
   _createPlatforms() {
@@ -45,6 +67,16 @@ export default class Level extends Phaser.Scene {
   _setupCollisions() {
     // Set up collisions between player and platforms
     this.physics.add.collider(this.player, this.platforms);
+
+    // Set up collisions between ats enemies and platforms
+    this.physics.add.collider(this.ats, this.platforms);
+    // Set up collisions between player and ats enemies
+    this.physics.add.collider(this.player, this.ats, this._handleATSPlayerCollision, null, this);
+  }
+
+  _handleATSPlayerCollision(player, ats) {
+    // Handle collision between player and ats  
+    ats.setActive(false).setVisible(false);
   }
 
   _handleInput() {
