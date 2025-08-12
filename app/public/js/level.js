@@ -22,7 +22,7 @@ export default class Level extends Phaser.Scene {
     this._createPlatforms();
 
     // Player setup
-    this.player = new Player(this, 200, 300);
+    this.player = new Player(this, 200, 570);
     this.player.setGravityY(800);
 
     // Enemy setup
@@ -64,13 +64,12 @@ export default class Level extends Phaser.Scene {
 
   _handleATSPlayerCollision(player, ats) {
     // Handle collision between player and ats  
-    // ats.setActive(false).setVisible(false);
-    ats.destroy(); // Destroy the ATS enemy on collision
-    player.setTint(0xff0000); // Change player color to red on collision
-    this.time.delayedCall(500, () => {
-      player.clearTint(); // Reset player color after 500ms
-    }, [], this);
-    // You can also add logic to reduce player health or trigger a game over
+    // ats.destroy(); // Destroy the ATS enemy on collision
+    // player.setTint(0xff0000); // Change player color to red on collision
+    // this.time.delayedCall(500, () => {
+    //   player.clearTint(); // Reset player color after 500ms
+    // }, [], this);
+    this._endGame(); // End the game on collision
   }
 
   _handleInput() {
@@ -86,7 +85,7 @@ export default class Level extends Phaser.Scene {
   _placeATSEnemies() {
     // Enemy positions
     const enemyPositions = [
-      { x: 400, y: 564 },
+      { x: 400, y: 564, patrolLeft: 350, patrolRight: 450 },
       { x: 600, y: 474 },
       { x: 200, y: 374 },
       { x: 600, y: 274 },
@@ -102,8 +101,27 @@ export default class Level extends Phaser.Scene {
     });
     
     for (let i = 0; i < enemyPositions.length; i++) {
-      const { x, y } = enemyPositions[i];
-      this.ats.create(x, y, 'ats_enemy');
+      const { x, y, patrolLeft, patrolRight } = enemyPositions[i];
+      const ats = this.ats.create(x, y, 'ats_enemy');
+      ats.patrolRegion = { left: patrolLeft, right: patrolRight };
     }
+  }
+
+  _endGame() {
+    this.physics.pause();
+    this.player.setTint(0xff0000);
+    // gameOver = true;
+    // alert("Game Over! Your score: " + score);
+    this.add.text(230, 100, "Game Over! You Lose.", {
+      fontSize: "32px",
+      fill: "#61dafb",
+    });
+    this.add.text(260, 150, "Press SPACE to Restart", {
+      fontSize: "24px",
+      fill: "#ffffff",
+    });
+    this.input.keyboard.once('keydown-SPACE', () => {
+      this.scene.restart();
+    });
   }
 }
