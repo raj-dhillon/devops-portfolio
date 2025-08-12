@@ -26,19 +26,7 @@ export default class Level extends Phaser.Scene {
     this.player.setGravityY(800);
 
     // Enemy setup
-    this.ats = this.physics.add.group({
-      classType: ATS,
-      key: 'ats_enemy',
-      repeat: 5,
-      setXY: { x: 100, y: 0, stepX: 150 }
-    });
-    // Need to re-set collision bounds for each ATS enemy
-    this.ats.children.iterate(ats => {
-      ats.setCollideWorldBounds(true);
-      ats.speed = Phaser.Math.Between(80, 120);
-      ats.speed = Math.random() < 0.5 ? -1 * ats.speed : ats.speed; // Random initial direction
-    });
-
+    this._placeATSEnemies();
 
     // Collision setup
     this._setupCollisions();
@@ -51,9 +39,9 @@ export default class Level extends Phaser.Scene {
     this.player.update(this.inputManager);
 
     // Update all ATS enemies
-    this.ats.children.iterate(ats => {
-      ats.update();
-    });
+    // this.ats.children.iterate(ats => {
+    //   ats.update();
+    // });
   }
 
   _createPlatforms() {
@@ -76,7 +64,13 @@ export default class Level extends Phaser.Scene {
 
   _handleATSPlayerCollision(player, ats) {
     // Handle collision between player and ats  
-    ats.setActive(false).setVisible(false);
+    // ats.setActive(false).setVisible(false);
+    ats.destroy(); // Destroy the ATS enemy on collision
+    player.setTint(0xff0000); // Change player color to red on collision
+    this.time.delayedCall(500, () => {
+      player.clearTint(); // Reset player color after 500ms
+    }, [], this);
+    // You can also add logic to reduce player health or trigger a game over
   }
 
   _handleInput() {
@@ -87,6 +81,29 @@ export default class Level extends Phaser.Scene {
         right: Phaser.Input.Keyboard.KeyCodes.D,
         space: Phaser.Input.Keyboard.KeyCodes.SPACE
       });
+  }
 
+  _placeATSEnemies() {
+    // Enemy positions
+    const enemyPositions = [
+      { x: 400, y: 564 },
+      { x: 600, y: 474 },
+      { x: 200, y: 374 },
+      { x: 600, y: 274 },
+    ];
+
+    // Create a group for ATS enemies
+    this.ats = this.physics.add.group({
+      classType: ATS,
+      runChildUpdate: true,
+      createCallback: (child) => {
+        child.setDefaults();
+      }
+    });
+    
+    for (let i = 0; i < enemyPositions.length; i++) {
+      const { x, y } = enemyPositions[i];
+      this.ats.create(x, y, 'ats_enemy');
+    }
   }
 }
