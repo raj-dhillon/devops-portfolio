@@ -6,6 +6,8 @@ export default class ATS extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
+        this.CONST_SPEED = { MIN: 150, MAX: 150 };
+
         // NONE OF THIS IS BEING SET FOR SOME REASON
         if (!this.speed) {
             this.setDefaults();
@@ -14,6 +16,7 @@ export default class ATS extends Phaser.Physics.Arcade.Sprite {
 
     update() {
         // Handle ats movement and behavior
+        this.speed = Phaser.Math.Between(this.CONST_SPEED.MIN, this.CONST_SPEED.MAX) * (this.speed < 0 ? -1 : 1);
         this.setVelocityX(this.speed);
         this._checkEdge();
     }
@@ -24,7 +27,7 @@ export default class ATS extends Phaser.Physics.Arcade.Sprite {
         // this.body.onWorldBounds = true;
         this.setBounce(1);
         // this.speed = Phaser.Math.Between(80, 120);
-        this.speed = 200;
+        this.speed = this.CONST_SPEED.MIN; // Set a default speed
         this.speed = Math.random() < 0.5 ? -this.speed : this.speed; // Random initial direction
     }
 
