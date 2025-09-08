@@ -1,0 +1,149 @@
+import Player from './player.js';
+import ATS from './ats.js';
+export default class Level extends Phaser.Scene {
+  constructor() {
+    super({ key: 'Level' });
+  }
+
+  preload() {
+    // this.load.image('tavern', 'assets/tavern.png');
+    this.load.image('level_background', 'https://placehold.co/800x600/032043/ffffff?text=Level+Background');
+    this.load.image('player', 'https://placehold.co/16x16/f0f2f4/909ead?text=P');
+    this.load.image('platform', 'https://placehold.co/200x20/f85a06/ffffff?text=Platform');
+    this.load.image('ground', 'https://placehold.co/800x20/f85a06/ffffff?text=Ground');
+    this.load.image('ats_enemy', 'https://placehold.co/32x32/B22222/000100?text=ATS');
+    this.load.image('end', 'https://placehold.co/32x90/00a86b/000100?text=END');
+    
+  }
+
+  create() {
+    this.add.image(400, 300, "level_background");
+
+    // Create platforms
+    this._createPlatforms();
+
+    // Create end goal
+    this.end = this.physics.add.staticImage(17, 45, 'end');
+    // this.end = this.physics.add.sprite(150, 50, "end");
+
+    // Player setup
+    this.player = new Player(this, 200, 570);
+    this.player.setGravityY(800);
+
+    // Enemy setup
+    this._placeATSEnemies();
+
+    // Collision setup
+    this._setupCollisions();
+
+    // Input handling
+    this._handleInput();
+  }
+
+  update() {
+    this.player.update(this.inputManager);
+
+    // Update all ATS enemies
+    // this.ats.children.iterate(ats => {
+    //   ats.update();
+    // });
+  }
+
+  _createPlatforms() {
+    this.platforms = this.physics.add.staticGroup();
+    this.platforms.create(400, 590, 'ground');
+    this.platforms.create(600, 500, 'platform');
+    this.platforms.create(200, 365, 'platform');
+    this.platforms.create(600, 300, 'platform');
+    this.platforms.create(200, 200, 'platform');
+    this.platforms.create(100, 100, 'platform');
+  }
+
+  _setupCollisions() {
+    // Set up collisions between player and platforms
+    this.physics.add.collider(this.player, this.platforms);
+
+    // Set up collisions between ats enemies and platforms
+    this.physics.add.collider(this.ats, this.platforms);
+    // Set up collisions between player and ats enemies
+    this.physics.add.collider(this.player, this.ats, this._handleATSPlayerCollision, null, this);
+
+    // Set up collisions between player and end goal
+    this.physics.add.collider(this.player, this.end, this._handleEndCollision, null, this);
+  }
+
+  _handleATSPlayerCollision(player, ats) {
+    // Handle collision between player and ats  
+    // ats.destroy(); // Destroy the ATS enemy on collision
+    // player.setTint(0xff0000); // Change player color to red on collision
+    // this.time.delayedCall(500, () => {
+    //   player.clearTint(); // Reset player color after 500ms
+    // }, [], this);
+    this._endGame(); // End the game on collision
+  }
+
+  _handleEndCollision(player, end) {
+    this._endGame(true); // End the game with a win
+  }
+
+  _handleInput() {
+    this.inputManager = this.input.keyboard.addKeys({
+        up: Phaser.Input.Keyboard.KeyCodes.W,
+        left: Phaser.Input.Keyboard.KeyCodes.A,
+        down: Phaser.Input.Keyboard.KeyCodes.S,
+        right: Phaser.Input.Keyboard.KeyCodes.D,
+        space: Phaser.Input.Keyboard.KeyCodes.SPACE
+      });
+  }
+
+  _placeATSEnemies() {
+    // Enemy positions
+    const enemyPositions = [
+      { x: 400, y: 564, patrolLeft: 320, patrolRight: 470 },
+      { x: 600, y: 474 },
+      { x: 200, y: 340 },
+      { x: 600, y: 274 },
+    ];
+
+    // Create a group for ATS enemies
+    this.ats = this.physics.add.group({
+      classType: ATS,
+      runChildUpdate: true,
+      createCallback: (child) => {
+        child.setDefaults();
+      }
+    });
+    
+    for (let i = 0; i < enemyPositions.length; i++) {
+      const { x, y, patrolLeft, patrolRight } = enemyPositions[i];
+      const ats = this.ats.create(x, y, 'ats_enemy');
+      ats.patrolRegion = { left: patrolLeft, right: patrolRight };
+    }
+  }
+
+  _endGame(win = false) {
+    this.physics.pause();
+
+    if (win) {
+      // this.player.setTint(0xff0000);
+      this.add.text(300, 100, "You Win!", {
+        fontSize: "48px",
+        fill: "#61dafb",
+      });
+    } else {
+      this.player.setTint(0xff0000);
+      this.add.text(230, 100, "Game Over! You Lose.", {
+        fontSize: "32px",
+        fill: "#61dafb",
+      });
+    }
+
+    this.add.text(260, 150, "Press SPACE to Restart", {
+      fontSize: "24px",
+      fill: "#ffffff",
+    });
+    this.input.keyboard.once('keydown-SPACE', () => {
+      this.scene.restart();
+    });
+  }
+}
