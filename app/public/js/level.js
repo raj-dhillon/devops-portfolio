@@ -12,6 +12,7 @@ export default class Level extends Phaser.Scene {
     this.load.image('platform', 'https://placehold.co/200x20/f85a06/ffffff?text=Platform');
     this.load.image('ground', 'https://placehold.co/800x20/f85a06/ffffff?text=Ground');
     this.load.image('ats_enemy', 'https://placehold.co/32x32/B22222/000100?text=ATS');
+    this.load.image('end', 'https://placehold.co/32x90/00a86b/000100?text=END');
     
   }
 
@@ -20,6 +21,10 @@ export default class Level extends Phaser.Scene {
 
     // Create platforms
     this._createPlatforms();
+
+    // Create end goal
+    this.end = this.physics.add.staticImage(17, 45, 'end');
+    // this.end = this.physics.add.sprite(150, 50, "end");
 
     // Player setup
     this.player = new Player(this, 200, 570);
@@ -48,8 +53,10 @@ export default class Level extends Phaser.Scene {
     this.platforms = this.physics.add.staticGroup();
     this.platforms.create(400, 590, 'ground');
     this.platforms.create(600, 500, 'platform');
-    this.platforms.create(200, 400, 'platform');
+    this.platforms.create(200, 365, 'platform');
     this.platforms.create(600, 300, 'platform');
+    this.platforms.create(200, 200, 'platform');
+    this.platforms.create(100, 100, 'platform');
   }
 
   _setupCollisions() {
@@ -60,6 +67,9 @@ export default class Level extends Phaser.Scene {
     this.physics.add.collider(this.ats, this.platforms);
     // Set up collisions between player and ats enemies
     this.physics.add.collider(this.player, this.ats, this._handleATSPlayerCollision, null, this);
+
+    // Set up collisions between player and end goal
+    this.physics.add.collider(this.player, this.end, this._handleEndCollision, null, this);
   }
 
   _handleATSPlayerCollision(player, ats) {
@@ -70,6 +80,10 @@ export default class Level extends Phaser.Scene {
     //   player.clearTint(); // Reset player color after 500ms
     // }, [], this);
     this._endGame(); // End the game on collision
+  }
+
+  _handleEndCollision(player, end) {
+    this._endGame(true); // End the game with a win
   }
 
   _handleInput() {
@@ -85,9 +99,9 @@ export default class Level extends Phaser.Scene {
   _placeATSEnemies() {
     // Enemy positions
     const enemyPositions = [
-      { x: 400, y: 564, patrolLeft: 350, patrolRight: 450 },
+      { x: 400, y: 564, patrolLeft: 320, patrolRight: 470 },
       { x: 600, y: 474 },
-      { x: 200, y: 374 },
+      { x: 200, y: 340 },
       { x: 600, y: 274 },
     ];
 
@@ -107,15 +121,23 @@ export default class Level extends Phaser.Scene {
     }
   }
 
-  _endGame() {
+  _endGame(win = false) {
     this.physics.pause();
-    this.player.setTint(0xff0000);
-    // gameOver = true;
-    // alert("Game Over! Your score: " + score);
-    this.add.text(230, 100, "Game Over! You Lose.", {
-      fontSize: "32px",
-      fill: "#61dafb",
-    });
+
+    if (win) {
+      // this.player.setTint(0xff0000);
+      this.add.text(300, 100, "You Win!", {
+        fontSize: "48px",
+        fill: "#61dafb",
+      });
+    } else {
+      this.player.setTint(0xff0000);
+      this.add.text(230, 100, "Game Over! You Lose.", {
+        fontSize: "32px",
+        fill: "#61dafb",
+      });
+    }
+
     this.add.text(260, 150, "Press SPACE to Restart", {
       fontSize: "24px",
       fill: "#ffffff",

@@ -6,7 +6,7 @@ export default class ATS extends Phaser.Physics.Arcade.Sprite {
         scene.add.existing(this);
         scene.physics.add.existing(this);
 
-        this.CONST_SPEED = { MIN: 150, MAX: 150 };
+        this.CONST_SPEED = { MIN: 110, MAX: 110 };
 
         // NONE OF THIS IS BEING SET FOR SOME REASON
         if (!this.speed) {
